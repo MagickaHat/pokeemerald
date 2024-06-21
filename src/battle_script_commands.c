@@ -5456,13 +5456,6 @@ static void Cmd_yesnoboxlearnmove(void)
             else
             {
                 u16 moveId = GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_MOVE1 + movePosition);
-                if (IsHMMove2(moveId))
-                {
-                    PrepareStringBattle(STRINGID_HMMOVESCANTBEFORGOTTEN, gActiveBattler);
-                    gBattleScripting.learnMoveState = 6;
-                }
-                else
-                {
                     gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
                     PREPARE_MOVE_BUFFER(gBattleTextBuff2, moveId)
@@ -5485,19 +5478,7 @@ static void Cmd_yesnoboxlearnmove(void)
                 }
             }
         }
-        break;
-    case 5:
-        HandleBattleWindow(YESNOBOX_X_Y, WINDOW_CLEAR);
-        gBattlescriptCurrInstr += 5;
-        break;
-    case 6:
-        if (gBattleControllerExecFlags == 0)
-        {
-            gBattleScripting.learnMoveState = 2;
-        }
-        break;
     }
-}
 
 static void Cmd_yesnoboxstoplearningmove(void)
 {

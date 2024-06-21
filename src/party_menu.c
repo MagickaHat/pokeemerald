@@ -4437,7 +4437,11 @@ void ItemUseCB_Medicine(u8 taskId, TaskFunc task)
         PlaySE(SE_SELECT);
         DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
         ScheduleBgCopyTilemapToVram(2);
-        gTasks[taskId].func = task;
+        if (gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD)
+            gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+        else
+            gTasks[taskId].func = task;
+        return;
     }
     else
     {
@@ -4469,7 +4473,10 @@ void ItemUseCB_Medicine(u8 taskId, TaskFunc task)
             GetMedicineItemEffectMessage(item);
             DisplayPartyMenuMessage(gStringVar4, TRUE);
             ScheduleBgCopyTilemapToVram(2);
-            gTasks[taskId].func = task;
+            if (gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(item, 1))
+                gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+            else
+                gTasks[taskId].func = task;
         }
     }
 }
@@ -4481,7 +4488,10 @@ static void Task_DisplayHPRestoredMessage(u8 taskId)
     DisplayPartyMenuMessage(gStringVar4, FALSE);
     ScheduleBgCopyTilemapToVram(2);
     HandleBattleLowHpMusicChange();
-    gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+        if (gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD && CheckBagHasItem(gSpecialVar_ItemId, 1))
+        gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
+    else
+        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
 }
 
 static void Task_ClosePartyMenuAfterText(u8 taskId)
@@ -4790,8 +4800,6 @@ static void Task_LearnedMove(u8 taskId)
     if (move[1] == 0)
     {
         AdjustFriendship(mon, FRIENDSHIP_EVENT_LEARN_TMHM);
-        if (item < ITEM_HM01)
-            RemoveBagItem(item, 1);
     }
     GetMonNickname(mon, gStringVar1);
     StringCopy(gStringVar2, gMoveNames[move[0]]);
@@ -4896,13 +4904,17 @@ static void Task_PartyMenuReplaceMove(u8 taskId)
 {
     struct Pokemon *mon;
     u16 move;
+    u8 oldPP;
 
     if (IsPartyMenuTextPrinterActive() != TRUE)
     {
         mon = &gPlayerParty[gPartyMenu.slotId];
         RemoveMonPPBonus(mon, GetMoveSlotToReplace());
+        oldPP = GetMonData(mon, MON_DATA_PP1 + GetMoveSlotToReplace(), NULL);
         move = gPartyMenu.data1;
         SetMonMoveSlot(mon, move, GetMoveSlotToReplace());
+        if (GetMonData(mon, MON_DATA_PP1 + GetMoveSlotToReplace(), NULL) > oldPP)
+        SetMonData(mon, MON_DATA_PP1 + GetMoveSlotToReplace(), &oldPP);
         Task_LearnedMove(taskId);
     }
 }
