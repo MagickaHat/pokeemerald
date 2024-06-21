@@ -53,12 +53,11 @@ OldaleTown_PokemonCenter_1F_Text_PokemonCentersAreGreat:
 
 OldaleTown_PokemonCenter_1F_Text_WirelessClubNotAvailable:
 	.string "The POKéMON WIRELESS CLUB on\n"
-	.string "the second floor was built recently.\p"
-	.string "But they say they're still making\n"
-	.string "adjustments.$"
+	.string "the second floor was shut down.\p"
+	.string "It's a shame we can't trade POKéMON anymore.$"
 
 OldaleTown_PokemonCenter_1F_Text_TradedInWirelessClub:
 	.string "The POKéMON WIRELESS CLUB on\n"
-	.string "the second floor was built recently.\p"
-	.string "I traded POKéMON right away.$"
-
+	.string "the second floor is still closed.\p"
+	.string "I can't believe our tax dollars\n"
+    .string "were just thrown away like that!$"
