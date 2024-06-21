@@ -518,7 +518,7 @@ static void DoMoveRelearnerMain(void)
         {
             s8 selection = Menu_ProcessInputNoWrapClearOnChoose();
 
-            if (selection == 0)
+            if (selection == MENU_B_PRESSED || selection == 0)
             {
                 if (GiveMoveToMon(&gPlayerParty[sMoveRelearnerStruct->partyMon], GetCurrentSelectedMove()) != MON_HAS_MAX_MOVES)
                 {
@@ -531,7 +531,7 @@ static void DoMoveRelearnerMain(void)
                     sMoveRelearnerStruct->state = MENU_STATE_PRINT_TRYING_TO_LEARN_PROMPT;
                 }
             }
-            else if (selection == MENU_B_PRESSED || selection == 1)
+            else if (selection == 1)
             {
                 if (sMoveRelearnerMenuSate.showContestInfo == FALSE)
                 {
