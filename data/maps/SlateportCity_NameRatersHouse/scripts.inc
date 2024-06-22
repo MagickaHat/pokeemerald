@@ -4,9 +4,8 @@ SlateportCity_NameRatersHouse_MapScripts::
 SlateportCity_NameRatersHouse_EventScript_NameRater::
 	lock
 	faceplayer
-	msgbox SlateportCity_NameRatersHouse_Text_PleasedToRateMonNickname, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, YES, SlateportCity_NameRatersHouse_EventScript_ChooseMonToRate
-	goto_if_eq VAR_RESULT, NO, SlateportCity_NameRatersHouse_EventScript_DeclineNameRate
+	msgbox SlateportCity_NameRatersHouse_Text_OutOfBusiness, MSGBOX_DEFAULT
+	release
 	end
 
 SlateportCity_NameRatersHouse_EventScript_ChooseMonToRate::
@@ -109,3 +108,8 @@ SlateportCity_NameRatersHouse_Text_ThatIsMerelyAnEgg:
 	.string "Now, now.\n"
 	.string "That is merely an EGG!$"
 
+SlateportCity_NameRatersHouse_Text_OutOfBusiness:
+    .string "Hm! Do you live under a rock?\n"
+    .string "Because of these new laws in\p"
+	.string "HOENN, I'm now jobless!\n"
+	.string "May ARCEUS save the job market.$"
