@@ -1120,8 +1120,8 @@ SlateportCity_Text_BuyTooMuch:
 
 SlateportCity_Text_GetNameRaterToHelpYou:
 	.string "If you want to change your POKéMON's\n"
-	.string "nickname, you'll have to get the NAME\l"
-	.string "RATER to help you.$"
+	.string "nickname, you'll have to go through\l"
+	.string "the party screen.$"
 
 SlateportCity_Text_CantChangeTradeMonName:
 	.string "Any POKéMON you get in a trade,\n"
@@ -1281,7 +1281,7 @@ SlateportCity_Text_HarborSign:
 
 SlateportCity_Text_NameRatersHouseSign:
 	.string "NAME RATER'S HOUSE\n"
-	.string "“POKéMON nicknames rated.”$"
+	.string "Set to be demolished soon!”$"
 
 SlateportCity_Text_ExplainBerries:
 	.string "If a wild POKéMON gets hurt, it heals\n"
