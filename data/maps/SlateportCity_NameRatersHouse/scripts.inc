@@ -113,3 +113,4 @@ SlateportCity_NameRatersHouse_Text_OutOfBusiness:
     .string "Because of these new laws in\p"
 	.string "HOENN, I'm now jobless!\n"
 	.string "May ARCEUS save the job market.$"
+	
