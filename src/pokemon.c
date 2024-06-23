@@ -3098,6 +3098,11 @@ void DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
     (var) /= (gStatStageRatios)[(mon)->statStages[(statIndex)]][1];                 \
 }
 
+#define WEATHER_RAIN_TEMPORARY 1
+#define WEATHER_RAIN_ANY 2
+#define WEATHER_SANDSTORM_ANY 3
+#define WEATHER_HAIL_ANY 4
+#define WEATHER_SUN_ANY 5
 s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u16 powerOverride, u8 typeOverride, u8 battlerIdAtk, u8 battlerIdDef)
 {
     u32 i;
@@ -3168,10 +3173,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         if (attackerHoldEffect == sHoldEffectToType[i][0]
             && type == sHoldEffectToType[i][1])
         {
-            if (IS_TYPE_PHYSICAL(type))
-                attack = (attack * (attackerHoldEffectParam + 100)) / 100;
-            else
-                spAttack = (spAttack * (attackerHoldEffectParam + 100)) / 100;
+            attack = (attack * (attackerHoldEffectParam + 100)) / 100;
+            spAttack = (spAttack * (attackerHoldEffectParam + 100)) / 100;
             break;
         }
     }
@@ -3196,7 +3199,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 
     // Apply abilities / field sports
     if (defender->ability == ABILITY_THICK_FAT && (type == TYPE_FIRE || type == TYPE_ICE))
-        spAttack /= 2;
+        gBattleMovePower /= 2;
     if (attacker->ability == ABILITY_HUSTLE)
         attack = (150 * attack) / 100;
     if (attacker->ability == ABILITY_PLUS && ABILITY_ON_FIELD2(ABILITY_MINUS))
@@ -3224,7 +3227,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
         defense /= 2;
 
-    if (IS_TYPE_PHYSICAL(type))
+    if IS_MOVE_PHYSICAL(gCurrentMove)
     {
         if (gCritMultiplier == 2)
         {
@@ -3279,7 +3282,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     if (type == TYPE_MYSTERY)
         damage = 0; // is ??? type. does 0 damage.
 
-    if (IS_TYPE_SPECIAL(type))
+    if IS_MOVE_SPECIAL(gCurrentMove)
     {
         if (gCritMultiplier == 2)
         {
@@ -3321,42 +3324,39 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         // Moves hitting both targets do half damage in double battles
         if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMoves[move].target == MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
             damage /= 2;
-
-        // Are effects of weather negated with cloud nine or air lock
+        
         if (WEATHER_HAS_EFFECT2)
-        {
-            // Rain weakens Fire, boosts Water
-            if (gBattleWeather & B_WEATHER_RAIN_TEMPORARY)
-            {
-                switch (type)
                 {
-                case TYPE_FIRE:
-                    damage /= 2;
-                    break;
-                case TYPE_WATER:
-                    damage = (15 * damage) / 10;
-                    break;
+                    if (gBattleWeather & WEATHER_RAIN_TEMPORARY)
+                    {
+                        switch (type)
+                        {
+                        case TYPE_FIRE:
+                                 damage /= 2;
+                                 break;
+                        case TYPE_WATER:
+                            damage = (15 * damage) / 10;
+                            break;
+                     }
+                 }
+
+                 // any weather except sun weakens solar beam
+                 if ((gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY)) && gCurrentMove == MOVE_SOLAR_BEAM)
+                     damage /= 2;
+
+                // sunny
+                if (gBattleWeather & WEATHER_SUN_ANY)
+                {
+                    switch (type)
+                    {
+                    case TYPE_FIRE:
+                        damage = (15 * damage) / 10;
+                        break;
+                    case TYPE_WATER:
+                        damage /= 2;
+                        break;
                 }
             }
-
-            // Any weather except sun weakens solar beam
-            if ((gBattleWeather & (B_WEATHER_RAIN | B_WEATHER_SANDSTORM | B_WEATHER_HAIL)) && gCurrentMove == MOVE_SOLAR_BEAM)
-                damage /= 2;
-
-            // Sun boosts Fire, weakens Water
-            if (gBattleWeather & B_WEATHER_SUN)
-            {
-                switch (type)
-                {
-                case TYPE_FIRE:
-                    damage = (15 * damage) / 10;
-                    break;
-                case TYPE_WATER:
-                    damage /= 2;
-                    break;
-                }
-            }
-        }
 
         // Flash fire triggered
         if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
@@ -3364,6 +3364,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     }
 
     return damage + 2;
+
+    }
 }
 
 u8 CountAliveMonsInBattle(u8 caseId)
