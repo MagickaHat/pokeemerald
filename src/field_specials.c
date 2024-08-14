@@ -4284,4 +4284,10 @@ void ChooseItemFromBag(void)
     default:
         break;
     }
+
+void DoPicboxCancel(void)
+{
+    u8 t = EOS;
+    AddTextPrinterParameterized(0, FONT_NORMAL, &t, 0, 1, 0, NULL);
+    ScriptMenu_HidePokemonPic();
 }
